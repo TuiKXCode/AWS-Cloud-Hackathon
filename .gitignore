@@ -1,0 +1,39 @@
+# Secrets / credentials — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials
+.aws/
+aws-exports.js
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+dist/
+build/
+
+# Infrastructure as code
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+cdk.out/
+.serverless/
+.aws-sam/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
