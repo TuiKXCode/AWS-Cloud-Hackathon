@@ -23,10 +23,14 @@ import { readFileSync, writeFileSync, readdirSync, rmSync, existsSync } from 'no
 import { join, extname } from 'node:path';
 
 const OUT_DIR = 'dist-offline';
-const PUBLIC_SPRITES = join('public', 'sprites', 'bodies');
+// Both sprite folders: the body art and the animal photographs used as faces.
+const SPRITE_DIRS = [
+  join('public', 'sprites', 'bodies'),
+  join('public', 'sprites', 'heads'),
+];
 const FINAL = join(OUT_DIR, 'mandai-echoes.html');
 
-const MIME = { '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml' };
+const MIME = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.svg': 'image/svg+xml' };
 
 function fail(message) {
   console.error(`\n[build-offline] ${message}\n`);
@@ -86,13 +90,15 @@ if (html.includes(jsName)) fail('the script tag was not inlined — check the bu
 
 // --- 3. Sprite paths -> data URIs -------------------------------------------
 let inlined = 0;
-if (existsSync(PUBLIC_SPRITES)) {
-  for (const file of readdirSync(PUBLIC_SPRITES)) {
-    const mime = MIME[extname(file)];
-    if (!mime) continue;
-    const dataUri = `data:${mime};base64,${readFileSync(join(PUBLIC_SPRITES, file)).toString('base64')}`;
-    // Matches both "/sprites/bodies/x.png" and "./sprites/bodies/x.png".
-    const pattern = new RegExp(`\\.?/sprites/bodies/${rx(file)}`, 'g');
+for (const dir of SPRITE_DIRS) {
+  if (!existsSync(dir)) continue;
+  const folder = dir.split(/[\\/]/).pop(); // "bodies" | "heads"
+  for (const file of readdirSync(dir)) {
+    const mime = MIME[extname(file).toLowerCase()];
+    if (!mime) continue; // skips CREDITS.md and anything else non-image
+    const dataUri = `data:${mime};base64,${readFileSync(join(dir, file)).toString('base64')}`;
+    // Matches both "/sprites/<folder>/x.jpg" and "./sprites/<folder>/x.jpg".
+    const pattern = new RegExp(`\\.?/sprites/${folder}/${rx(file)}`, 'g');
     const before = html;
     html = html.replace(pattern, () => dataUri);
     if (html !== before) inlined += 1;

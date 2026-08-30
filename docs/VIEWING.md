@@ -77,3 +77,6 @@ appears with a generated code.
   fully on-device via TensorFlow.js; photos never leave the browser.
 - **Starting over:** the Kitchen briefing has *Start over from Day 1*. To wipe everything,
   open a private window.
+- **The animal photographs** are from Wikimedia Commons and are all public domain, CC0 or
+  CC BY — no share-alike. Photographers and source links are credited in
+  `public/sprites/heads/CREDITS.md` in the repository.

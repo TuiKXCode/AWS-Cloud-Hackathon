@@ -36,6 +36,30 @@ const headerStyle: CSSProperties = {
   gap: space.md,
 };
 
+/**
+ * The animal photo, as an avatar in the header beside the name. Sitting in the header row
+ * rather than floating over it costs no vertical height — which matters, because this card
+ * is the first thing on the screen on a phone. Circular to match how the same photo appears
+ * as the animal's face in the game.
+ */
+const photoStyle: CSSProperties = {
+  flexShrink: 0,
+  width: 52,
+  height: 52,
+  objectFit: 'cover',
+  borderRadius: '50%',
+  border: `2px solid rgba(255, 255, 255, 0.85)`,
+  backgroundColor: colors.leafTint,
+};
+
+/** Groups the photo and the name so the badge stays pushed to the far end. */
+const headerMainStyle: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: space.md,
+  minWidth: 0,
+};
+
 const nameStyle: CSSProperties = {
   margin: 0,
   fontSize: '1.25rem',
@@ -139,9 +163,26 @@ export function NearbyExhibitCard() {
   return (
     <section className="nearby-exhibit-card" style={cardStyle}>
       <header className="nearby-exhibit-card__header" style={headerStyle}>
-        <h2 className="nearby-exhibit-card__name" style={nameStyle}>
-          {exhibit.name}
-        </h2>
+        <div style={headerMainStyle}>
+          {/* A photograph of the animal, so the card shows what the visitor is looking
+              at rather than describing it in words alone. Rendered only when the exhibit
+              has one; the header is unchanged for any exhibit that does not. Decorative —
+              the name beside it is the heading — so the alt text stays empty. */}
+          {exhibit.spriteHeadAsset ? (
+            <img
+              className="nearby-exhibit-card__photo"
+              src={exhibit.spriteHeadAsset}
+              alt=""
+              width={52}
+              height={52}
+              loading="lazy"
+              style={photoStyle}
+            />
+          ) : null}
+          <h2 className="nearby-exhibit-card__name" style={nameStyle}>
+            {exhibit.name}
+          </h2>
+        </div>
         {/* Req 3.2: colour-coded conservation status badge. */}
         <IUCNBadge status={exhibit.iucnStatus} />
       </header>

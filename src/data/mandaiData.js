@@ -16,6 +16,9 @@
 //
 // Coordinates sit on the same grid as `facilities`, `dining` and `demoLocations` below,
 // so the Phase 1 distance sort stays coherent.
+//
+// `spriteHeadAsset` is a real photograph of the animal, used as its face until the
+// visitor photographs it themselves. Sources and licences: public/sprites/heads/CREDITS.md.
 
 export const exhibits = [
   {
@@ -36,7 +39,7 @@ export const exhibits = [
       'Without tigers, deer and boar numbers explode, over-browse the forest floor, and seedlings never make it to canopy height.',
     imagenetLabels: ['tiger'],
     spriteBodyAsset: '/sprites/bodies/malayan-tiger-body.png',
-    spriteHeadAsset: null,
+    spriteHeadAsset: '/sprites/heads/malayan-tiger-head.jpg',
     points: 20,
     // --- presentation (Phase 7) ---
     emoji: '🐯',
@@ -60,7 +63,7 @@ export const exhibits = [
       'Grazing herds go unchecked, strip the grassland bare, and the savanna food web thins from the bottom up.',
     imagenetLabels: ['lion', 'King of beasts'],
     spriteBodyAsset: '/sprites/bodies/lion-body.png',
-    spriteHeadAsset: null,
+    spriteHeadAsset: '/sprites/heads/lion-head.jpg',
     points: 20,
     emoji: '🦁',
     palette: { fur: '#E8A33D', dark: '#B36514', belly: '#FBE6BE' },
@@ -83,7 +86,7 @@ export const exhibits = [
       'Pandas spread bamboo seed as they move through the forest; without them the groves stop regenerating evenly.',
     imagenetLabels: ['giant panda', 'panda'],
     spriteBodyAsset: '/sprites/bodies/giant-panda-body.png',
-    spriteHeadAsset: null,
+    spriteHeadAsset: '/sprites/heads/giant-panda-head.jpg',
     points: 20,
     emoji: '🐼',
     palette: { fur: '#F5F5F4', dark: '#3F3F46', belly: '#FFFFFF' },
@@ -106,7 +109,7 @@ export const exhibits = [
       'Elephants knock down trees and keep grassland open. Lose them and the habitat closes over, pushing out grazing species.',
     imagenetLabels: ['Indian elephant', 'African elephant'],
     spriteBodyAsset: '/sprites/bodies/asian-elephant-body.png',
-    spriteHeadAsset: null,
+    spriteHeadAsset: '/sprites/heads/asian-elephant-head.jpg',
     points: 20,
     emoji: '🐘',
     palette: { fur: '#9CA3AF', dark: '#6B7280', belly: '#D1D5DB' },
@@ -129,7 +132,7 @@ export const exhibits = [
       'Flamingos keep algal blooms in check. Without them the shallows choke and the whole wetland loses oxygen.',
     imagenetLabels: ['flamingo'],
     spriteBodyAsset: '/sprites/bodies/flamingo-body.png',
-    spriteHeadAsset: null,
+    spriteHeadAsset: '/sprites/heads/flamingo-head.jpg',
     points: 20,
     emoji: '🦩',
     palette: { fur: '#F9A8D4', dark: '#EC4899', belly: '#FCE7F3' },
@@ -152,7 +155,7 @@ export const exhibits = [
       'Giraffes prune the canopy high up, which is what lets light reach the shrub layer below.',
     imagenetLabels: ['giraffe'],
     spriteBodyAsset: '/sprites/bodies/giraffe-body.png',
-    spriteHeadAsset: null,
+    spriteHeadAsset: '/sprites/heads/giraffe-head.jpg',
     points: 20,
     emoji: '🦒',
     palette: { fur: '#E2B14C', dark: '#A16207', belly: '#FEF3C7' },
@@ -175,7 +178,7 @@ export const exhibits = [
       'Their trails through swamp forest keep waterways open for everything smaller that follows them.',
     imagenetLabels: ['hippopotamus', 'hippo'],
     spriteBodyAsset: '/sprites/bodies/pygmy-hippo-body.png',
-    spriteHeadAsset: null,
+    spriteHeadAsset: '/sprites/heads/pygmy-hippo-head.jpg',
     points: 20,
     emoji: '🦛',
     palette: { fur: '#A78BFA', dark: '#7C3AED', belly: '#EDE9FE' },

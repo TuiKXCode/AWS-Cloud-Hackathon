@@ -37,6 +37,12 @@ export interface Exhibit {
   ecosystemImpactIfRemoved: string;
   imagenetLabels: string[];
   spriteBodyAsset: string;
+  /**
+   * A photograph of the animal's head, used as its face until the visitor takes their
+   * own. Optional: an exhibit without one falls back to the drawn vector face.
+   * Sources and licences: `public/sprites/heads/CREDITS.md`.
+   */
+  spriteHeadAsset?: string | null;
   points: number;
 }
 
