@@ -1,0 +1,349 @@
+{
+  "pbtResults": {
+    "2.2 Write property test for Haversine completeness and non-negativity": {
+      "status": "passed",
+      "lastRunTimestamp": 1787988845363
+    },
+    "2.3 Write property test for Haversine symmetry": {
+      "status": "passed",
+      "lastRunTimestamp": 1787988846104
+    },
+    "7.2 Write property test for simulator position override": {
+      "status": "passed",
+      "lastRunTimestamp": 1787989508642
+    }
+  },
+  "executionHistory": {
+    "1.1 Initialize React TypeScript project with Vite and install dependencies": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988508907
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988519092
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988690153
+      }
+    ],
+    "1.2 Create TypeScript type definitions for data models": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988508954
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988695912
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988764145
+      }
+    ],
+    "2.1 Implement the Haversine distance function": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988508992
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988769830
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988864787
+      }
+    ],
+    "3. Checkpoint - Ensure Haversine tests pass": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988509010
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988882483
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988894493
+      }
+    ],
+    "4.1 Implement `computeExhibitDistances` and `findNearestExhibit`": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988509026
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988900604
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989149027
+      }
+    ],
+    "4.2 Implement `computeFacilityDistances` and `hasMovedBeyondThreshold`": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988509043
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988901718
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989149965
+      }
+    ],
+    "5. Checkpoint - Ensure Location Engine tests pass": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988509063
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989155014
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989170497
+      }
+    ],
+    "6.1 Create LocationContext and LocationProvider component": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988509098
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989176686
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989384372
+      }
+    ],
+    "6.2 Implement geolocation fallback logic in LocationProvider": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988509121
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989177497
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989385338
+      }
+    ],
+    "7.1 Implement DemoLocationSimulator component": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988509137
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989393114
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989552526
+      }
+    ],
+    "7.3 Implement IUCNBadge component": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988509154
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989394276
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989548318
+      }
+    ],
+    "7.4 Implement NearbyExhibitCard component": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988509171
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989395473
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989549480
+      }
+    ],
+    "7.5 Implement FacilitiesTab component": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988509188
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989396725
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989550647
+      }
+    ],
+    "7.6 Implement FallbackNotification component": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988509206
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989397577
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989551601
+      }
+    ],
+    "8. Checkpoint - Ensure component tests pass": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988509223
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989558358
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989575374
+      }
+    ],
+    "9.1 Create App component with tab navigation and wire all components": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988509239
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989580989
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788001178839
+      }
+    ],
+    "10. Final checkpoint - Ensure all tests pass": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988509255
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788001184018
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788006985677
+      }
+    ],
+    "1. Set up project foundation and dependencies": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988764168
+      }
+    ],
+    "2. Implement Haversine utility and property tests": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787988864821
+      }
+    ],
+    "4. Implement Location Engine module and property tests": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989149988
+      }
+    ],
+    "6. Implement LocationProvider React Context": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989385367
+      }
+    ],
+    "7. Implement UI Components": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1787989552547
+      }
+    ],
+    "9. Wire together App shell and integration": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788001178872
+      }
+    ]
+  }
+}
