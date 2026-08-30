@@ -23,7 +23,11 @@ import { writeCollection } from '../../engine/storage';
 import { STORAGE_KEY } from '../../engine/playerState.js';
 import type { CollectedRecord } from '../../types';
 
+/** Set true by a test to simulate a phone-sized window. */
+let compact = false;
+
 beforeEach(() => {
+  compact = false;
   localStorage.clear();
 
   // Fall back to a default location rather than waiting on a real fix.
@@ -36,11 +40,13 @@ beforeEach(() => {
     },
   });
 
-  // jsdom ships no matchMedia; the game's layout hook needs one.
+  // jsdom ships no matchMedia. Two different consumers need it: the game's layout hook
+  // (portrait vs landscape board) and the shell's compact-viewport check. `compact` lets
+  // a test pretend to be a phone; the default is a roomy desktop.
   vi.stubGlobal(
     'matchMedia',
     vi.fn((query: string) => ({
-      matches: false, // landscape board
+      matches: /max-width: 900px|max-height: 780px/.test(query) ? compact : false,
       media: query,
       onchange: null,
       addEventListener: vi.fn(),
@@ -185,5 +191,67 @@ describe('the tycoon game inside the app shell', () => {
 
     // (20 + 50) / 140 = 50%
     expect(shellProgressBar()).toHaveAttribute('aria-valuenow', '50');
+  });
+});
+
+describe('sizing the game for the window it is in', () => {
+  it('opens straight into fullscreen on a compact screen', () => {
+    compact = true;
+    render(<App />);
+    openKitchen();
+
+    // Fullscreen replaces the "Fullscreen" affordance with a way back out.
+    expect(
+      screen.getByRole('button', { name: /exit fullscreen/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('stays inside the tabbed shell on a roomy screen', () => {
+    render(<App />);
+    openKitchen();
+
+    expect(screen.queryByRole('button', { name: /exit fullscreen/i })).toBeNull();
+    expect(screen.getByRole('button', { name: /fullscreen/i })).toBeInTheDocument();
+  });
+
+  it('exiting fullscreen brings the tabs back', () => {
+    compact = true;
+    render(<App />);
+    openKitchen();
+
+    fireEvent.click(screen.getByRole('button', { name: /exit fullscreen/i }));
+
+    expect(screen.getByRole('tab', { name: 'Kitchen' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /exit fullscreen/i })).toBeNull();
+  });
+
+  it('stands the location chrome down while the kitchen is open', () => {
+    render(<App />);
+    // The simulator is a combobox; it belongs to the location-driven views.
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+
+    openKitchen();
+    expect(screen.queryByRole('combobox')).toBeNull();
+  });
+
+  it('brings the location chrome back on a location tab', () => {
+    render(<App />);
+    openKitchen();
+    expect(screen.queryByRole('combobox')).toBeNull();
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Nearby Exhibit' }));
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+  });
+
+  it('does not repeat the app title inside the game', () => {
+    render(<App />);
+    openKitchen();
+
+    // The shell heading is the visible one; the game's own is screen-reader only, so
+    // the board does not pay ~30px for a duplicate.
+    const visible = screen
+      .getAllByText(/Mandai Echoes/i)
+      .filter((el) => !el.className.includes('sr-only'));
+    expect(visible.length).toBe(1);
   });
 });

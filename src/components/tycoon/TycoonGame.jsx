@@ -138,15 +138,11 @@ export default function TycoonGame() {
   const busy = chefIsBusy(state.chef);
 
   return (
-    <div className="flex h-full flex-col gap-1.5 overflow-y-auto p-2 sm:gap-2 sm:overflow-hidden sm:p-3">
-      <header className="flex shrink-0 items-baseline justify-between gap-2">
-        <h1 className="text-sm font-black uppercase tracking-[0.2em] text-amber-300 sm:text-base">
-          Mandai Echoes
-        </h1>
-        <p className="text-[10px] uppercase tracking-widest text-emerald-300/70">
-          Feeding Frenzy · prototype
-        </p>
-      </header>
+    <div className="flex h-full flex-col gap-1 overflow-hidden p-1.5 sm:gap-2 sm:p-3">
+      {/* The title bar this used to carry said "Mandai Echoes" directly under the shell
+          header that already says it. On a short phone that duplicate cost ~30px of board.
+          The name is kept for screen readers; the shell shows it visually. */}
+      <h1 className="sr-only">Mandai Echoes — Feeding Frenzy</h1>
 
       <div className="game-frame-area flex min-h-0 flex-1 justify-center">
         {/* Fits the frame to whichever of width or height runs out first, measured against the
@@ -223,10 +219,18 @@ export default function TycoonGame() {
         </div>
       </div>
 
-      <p className="shrink-0 text-balance px-1 text-center text-[11px] font-medium leading-snug text-emerald-50/90 sm:text-xs">
-        Tap a <span className="font-bold text-amber-200">＋</span> counter to send the chef for
-        ingredients, then tap the animal you are feeding and hit{' '}
-        <span className="font-bold text-amber-200">SERVE</span>.
+      {/* Two lines of help under a 220px board is a poor trade, so the wording shortens
+          on small screens rather than the board shrinking to make room for it. */}
+      <p className="shrink-0 text-balance px-1 text-center text-[10px] font-medium leading-tight text-emerald-50/90 sm:text-xs sm:leading-snug">
+        <span className="sm:hidden">
+          Tap <span className="font-bold text-amber-200">＋</span>, then the animal, then{' '}
+          <span className="font-bold text-amber-200">SERVE</span>.
+        </span>
+        <span className="hidden sm:inline">
+          Tap a <span className="font-bold text-amber-200">＋</span> counter to send the chef for
+          ingredients, then tap the animal you are feeding and hit{' '}
+          <span className="font-bold text-amber-200">SERVE</span>.
+        </span>
       </p>
     </div>
   );

@@ -70,6 +70,15 @@ type Tab =
   | 'kitchen';
 
 /**
+ * Whether the window is too small to show the game inside the tabbed shell at a usable
+ * size. Phones in portrait and short laptop windows both qualify; a desktop does not.
+ */
+function isCompactViewport(): boolean {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
+  return window.matchMedia('(max-width: 900px), (max-height: 780px)').matches;
+}
+
+/**
  * Inner shell rendered inside the LocationProvider so it can consume the
  * location context (needed for the fallback notification flag).
  */
@@ -198,12 +207,20 @@ function AppShell() {
         )}
       </header>
 
-      <DemoLocationSimulator />
+      {/* Both of these serve the location-driven views. On a short phone they cost
+          about 160px between them — a quarter of the screen — and the kitchen does not
+          read location at all, so they step aside while it is open and come straight
+          back on every other tab. */}
+      {activeTab !== 'kitchen' && (
+        <>
+          <DemoLocationSimulator />
 
-      <FallbackNotification
-        visible={showFallback}
-        onDismiss={() => setDismissed(true)}
-      />
+          <FallbackNotification
+            visible={showFallback}
+            onDismiss={() => setDismissed(true)}
+          />
+        </>
+      )}
 
       {/* Phase 5: persistent questline Progress Bar above the tabs so it stays
           visible regardless of the active tab (Req 1.1). */}
@@ -280,7 +297,14 @@ function AppShell() {
           type="button"
           role="tab"
           aria-selected={activeTab === 'kitchen'}
-          onClick={() => setActiveTab('kitchen')}
+          onClick={() => {
+            setActiveTab('kitchen');
+            // On a compact screen the inline board tops out around 250px wide, which is
+            // not playable. Opening straight into fullscreen is the difference between
+            // that and roughly the full width of the device; "Exit fullscreen" sits in
+            // the bar at the top for anyone who wants the tabs back.
+            if (isCompactViewport()) setKitchenFullscreen(true);
+          }}
           style={tabStyle(activeTab === 'kitchen')}
         >
           Kitchen
