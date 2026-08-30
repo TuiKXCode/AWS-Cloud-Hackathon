@@ -99,7 +99,7 @@ The app opens on the **Nearby Exhibit** tab. Everything is driven by the **Demo 
 dropdown at the top — you never need to physically move.
 
 1. **Nearby Exhibit** — pick *Malayan Tiger Enclosure* from the dropdown. The card follows
-   the location: conservation status, a fun fact, feeding times. Tap the sound button for
+   the location: a photo of the animal, conservation status, a fun fact, feeding times. Tap the sound button for
    an audio cue, and **Take Photo** to collect the animal (needs a secure origin, see above).
 2. **Facilities** — restrooms, nursing room, water refill, sorted nearest-first with
    distances and a landmark to walk toward.
@@ -361,6 +361,15 @@ You opened a parent folder. Open the `AWS-Cloud-Hackathon` folder itself.
 
 **Pushed to the wrong GitHub account**
 `gh auth switch` toggles between accounts the CLI knows about.
+
+---
+
+## Image credits
+
+The animal photographs in `public/sprites/heads/` come from Wikimedia Commons — all public
+domain, CC0 or CC BY, and deliberately none share-alike so the licensing here stays simple.
+Photographers, licences and source links:
+[`public/sprites/heads/CREDITS.md`](public/sprites/heads/CREDITS.md).
 
 ---
 
