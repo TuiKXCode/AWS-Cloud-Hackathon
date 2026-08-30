@@ -61,6 +61,15 @@ afterEach(() => {
   mockDemoLocations.length = 0;
 });
 
+/**
+ * Unlike the engine property tests, which exercise pure functions, every run here mounts
+ * a React tree, opens a <select> and reads the context back. A hundred of those is
+ * comfortably the slowest test in the suite (~7s warm, more on a cold or loaded machine),
+ * so it gets an explicit budget instead of vitest's 5s default — which it was tripping
+ * intermittently, failing a suite that was otherwise green.
+ */
+const PROPERTY_TIMEOUT_MS = 60_000;
+
 describe('DemoLocationSimulator — Property 6: simulator position override exactness', () => {
   it('sets currentPosition to exactly the selected demo location coordinates', () => {
     fc.assert(
@@ -114,5 +123,5 @@ describe('DemoLocationSimulator — Property 6: simulator position override exac
       ),
       { numRuns: 100 },
     );
-  });
+  }, PROPERTY_TIMEOUT_MS);
 });
