@@ -19,6 +19,7 @@ export default function DayIntro({
   roster,
   headSources,
   onStart,
+  onReset,
   onSetPhoto,
   onClearPhoto,
 }) {
@@ -126,6 +127,20 @@ export default function DayIntro({
           <Play className="h-5 w-5" aria-hidden="true" />
           Open for Day {day}
         </button>
+
+        {/* The run persists, so a browser that has played before reopens mid-run. That is
+            right for a visitor coming back to it, but wrong for a demo handed to someone
+            new — hence a way back to Day 1. Offered only once there is something to
+            reset. */}
+        {day > 1 && typeof onReset === 'function' ? (
+          <button
+            type="button"
+            onClick={onReset}
+            className="text-[11px] font-semibold uppercase tracking-wider text-emerald-200/70 underline underline-offset-4 transition hover:text-emerald-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          >
+            Start over from Day 1
+          </button>
+        ) : null}
 
         {error ? <p className="text-[13px] font-semibold text-rose-300">{error}</p> : null}
 

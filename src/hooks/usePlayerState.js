@@ -76,6 +76,23 @@ export function usePlayerState() {
     [update]
   );
 
+  /**
+   * Start the restaurant again from Day 1.
+   *
+   * Photographed animals and the voucher are left alone — those are the visitor's record
+   * of the reserve, not part of a shift. Only the run resets: day, spendable funds and
+   * upgrades. `points` drops by exactly what the game contributed, which is what keeps
+   * `points === capture + earnedPoints` true; progress earned by photographing exhibits
+   * survives untouched.
+   */
+  const resetTycoon = useCallback(() => {
+    update((stored) => ({
+      ...stored,
+      points: Math.max(0, stored.points - stored.tycoon.earnedPoints),
+      tycoon: { day: 1, funds: 0, upgrades: {}, bestDay: 0, earnedPoints: 0 },
+    }));
+  }, [update]);
+
   /** Mid-day persistence for the shop: funds spent, upgrades owned. */
   const syncTycoon = useCallback(
     (patch) => {
@@ -162,6 +179,7 @@ export function usePlayerState() {
     headSources,
     addPoints,
     syncTycoon,
+    resetTycoon,
     setAnimalPhoto,
     clearAnimalPhoto,
   };

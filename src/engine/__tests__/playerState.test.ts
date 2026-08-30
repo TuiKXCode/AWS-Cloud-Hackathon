@@ -136,6 +136,63 @@ describe('reading damaged or absent state', () => {
     });
   });
 
+  it('infers the game share of a save written before earnedPoints existed', () => {
+    // Exactly what the standalone prototype persisted: a points total, a tycoon run,
+    // and no earnedPoints field. Defaulting it to 0 would make the next capture write
+    // recompute points as capture-only and silently delete the banked days.
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        points: 75,
+        collectedAnimals: [],
+        voucherRedeemed: false,
+        tycoon: { day: 3, funds: 50, upgrades: {}, bestDay: 30 },
+      }),
+    );
+
+    expect(readPlayerState().tycoon.earnedPoints).toBe(75);
+
+    // And the total survives a subsequent capture rather than dropping to 20.
+    writeCollection(JSON.stringify([tigerPhoto]));
+    expect(readPlayerState().points).toBe(95);
+  });
+
+  it('splits a legacy total between photos and the game', () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        points: 55, // 20 from the tiger photo + 35 banked in the game
+        collectedAnimals: [
+          {
+            exhibitId: 'malayan-tiger',
+            photoDataUrl: 'data:image/jpeg;base64,AAAA',
+            spriteDataUrl: null,
+            recognizedVia: 'classifier',
+            capturedAt: '2026-08-28T10:15:00.000Z',
+          },
+        ],
+        voucherRedeemed: false,
+        tycoon: { day: 2, funds: 5, upgrades: {}, bestDay: 35 },
+      }),
+    );
+
+    expect(readPlayerState().tycoon.earnedPoints).toBe(35);
+  });
+
+  it('honours a stored earnedPoints of 0 rather than inferring over it', () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        points: 40,
+        collectedAnimals: [],
+        voucherRedeemed: false,
+        tycoon: { day: 1, funds: 0, upgrades: {}, bestDay: 0, earnedPoints: 0 },
+      }),
+    );
+
+    expect(readPlayerState().tycoon.earnedPoints).toBe(0);
+  });
+
   it('never throws when localStorage is unavailable', () => {
     vi.stubGlobal('localStorage', undefined);
 

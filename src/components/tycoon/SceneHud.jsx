@@ -40,7 +40,7 @@ export default function SceneHud({ layout, state, questlinePoints, onPause, onRe
           </span>
 
           <div
-            className="-ml-2 h-[18px] min-w-0 flex-1 overflow-hidden rounded-full sm:-ml-2.5 sm:h-[22px]"
+            className="relative -ml-2 h-[18px] min-w-0 flex-1 overflow-hidden rounded-full sm:-ml-2.5 sm:h-[22px]"
             style={{ backgroundColor: '#5B3C18', boxShadow: `0 0 0 2px ${O}` }}
             role="progressbar"
             aria-label="Questline progress"
@@ -56,19 +56,27 @@ export default function SceneHud({ layout, state, questlinePoints, onPause, onRe
               }`}
               style={{ width: `${fraction * 100}%` }}
             />
+
+            {/* Centred inside the bar rather than positioned at a percentage of the HUD.
+                A percentage assumed the bar was wide; on a small board it put the reading
+                under the coin, which is how "0 / 140 pts" ended up showing as ") / 140". */}
+            <span
+              className="pointer-events-none absolute inset-0 flex items-center justify-center px-1 font-mono text-[11px] font-black tabular-nums text-white sm:text-[13px]"
+              style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9), 0 0 3px rgba(0,0,0,0.8)' }}
+            >
+              {questlinePoints} / {total} pts
+            </span>
           </div>
 
-          <span
-            className="pointer-events-none absolute left-[14%] font-mono text-[11px] font-black tabular-nums text-white sm:text-[13px]"
-            style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9), 0 0 3px rgba(0,0,0,0.8)' }}
-          >
-            {questlinePoints} / {total} pts
-          </span>
         </div>
 
+        {/* One line, always. Allowed to wrap it ran three lines deep on a phone-sized
+            board and covered the day plaque, the wallet chips and the upgrade signs
+            behind it. The full prize label is spelled out on the day summary and on the
+            voucher itself, so truncating here loses nothing. */}
         <p
-          className="mt-1 w-fit rounded-md bg-black/65 px-2 py-[2px] text-[10px] font-medium leading-snug text-white sm:text-xs"
-          style={{ maxWidth: portrait ? '135%' : '100%' }}
+          className="mt-1 w-fit truncate rounded-md bg-black/65 px-2 py-[2px] text-[10px] font-medium leading-snug text-white sm:text-xs"
+          style={{ maxWidth: portrait ? '120%' : '100%' }}
         >
           Next reward:{' '}
           <span className="font-bold text-amber-200">{questlineConfig.prizeLabel}</span>

@@ -2,6 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  /**
+   * Fit a fixed-aspect game frame inside whatever box it is given.
+   *
+   * The tycoon board is mounted inside a shell tab, not the raw viewport, so it cannot size
+   * itself off `vh`. Container query units measure the actual available box. `--frame-ratio` is
+   * the aspect as a number (16/9 or 9/16) and is set by the component.
+   *
+   * The vh line is the fallback for browsers without container query units; where they are
+   * supported the second rule wins and the measurement becomes exact.
+   */
+  /**
+   * A tab strip that scrolls rather than wraps. The scrollbar itself is chrome we do not
+   * want eating vertical space on a touch device, where the strip is swiped anyway.
+   */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .game-frame-area {
+    container-type: size;
+  }
+
+  .game-frame {
+    width: 100%;
+    max-width: min(1700px, calc((100vh - 5.5rem) * var(--frame-ratio)));
+  }
+
+  @supports (max-width: 1cqh) {
+    .game-frame {
+      max-width: min(1700px, calc(100cqh * var(--frame-ratio)));
+    }
+  }
+}
+
 @layer base {
   html,
   body,

@@ -31,6 +31,8 @@
 // know how the other earns points. This is what the PRD means by the tycoon game
 // contributing to, not replacing, existing questline progress (Phase 7, "Output").
 
+import { exhibitsById } from '../data/mandaiData.js';
+
 /** The one and only localStorage key for player state (PRD §2). */
 export const STORAGE_KEY = 'mandaiEchoes.playerState';
 
@@ -175,8 +177,10 @@ export function readPlayerState() {
   const rawTycoon =
     typeof parsed.tycoon === 'object' && parsed.tycoon !== null ? parsed.tycoon : {};
 
+  const points = Math.max(0, num(parsed.points, 0));
+
   return {
-    points: Math.max(0, num(parsed.points, 0)),
+    points,
     collectedAnimals,
     voucherRedeemed: parsed.voucherRedeemed === true,
     voucherCode:
@@ -191,9 +195,56 @@ export function readPlayerState() {
           ? { ...rawTycoon.upgrades }
           : {},
       bestDay: Math.max(0, num(rawTycoon.bestDay, 0)),
-      earnedPoints: Math.max(0, num(rawTycoon.earnedPoints, 0)),
+      earnedPoints: resolveEarnedPoints(rawTycoon.earnedPoints, points, collectedAnimals),
     },
   };
+}
+
+/**
+ * The game's share of `points`.
+ *
+ * `earnedPoints` was introduced when the game was wired into the questline; saves written
+ * before that have a `points` total but no record of how it was split. Defaulting those to
+ * 0 would silently delete the player's game progress the next time the capture flow wrote
+ * (it recomputes `points` as capture + earned), so a save that predates the field has its
+ * game share inferred instead: whatever the total holds beyond what the photos account for.
+ *
+ * Only absence triggers the inference. A stored 0 is a real value and is honoured.
+ *
+ * @param {unknown} stored
+ * @param {number} points
+ * @param {CollectedAnimal[]} collectedAnimals
+ * @returns {number}
+ */
+function resolveEarnedPoints(stored, points, collectedAnimals) {
+  if (stored !== undefined && stored !== null) {
+    return Math.max(0, num(stored, 0));
+  }
+  return Math.max(0, points - capturePointsFor(collectedAnimals));
+}
+
+/**
+ * Points the photographed exhibits account for: each DISTINCT exhibit's `points`, counted
+ * once. Mirrors `computePlayerTotal` in collection.ts, which owns the same rule for the
+ * in-memory collection — kept here rather than imported so this module stays plain JS with
+ * no dependency on the TypeScript half.
+ *
+ * @param {CollectedAnimal[]} collectedAnimals
+ * @returns {number}
+ */
+function capturePointsFor(collectedAnimals) {
+  const seen = new Set();
+  let total = 0;
+  for (const entry of collectedAnimals) {
+    if (seen.has(entry.exhibitId)) continue;
+    seen.add(entry.exhibitId);
+    const exhibit = exhibitsById[entry.exhibitId];
+    const value = exhibit?.points;
+    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
+      total += value;
+    }
+  }
+  return total;
 }
 
 /**

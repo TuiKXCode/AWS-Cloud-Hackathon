@@ -19,15 +19,10 @@ const BUSY_LABEL = {
 };
 
 /**
- * Cap the frame by whichever axis runs out first, leaving room for the header and the help
- * line. Without this the scene is either letterboxed on a laptop or taller than the window on
- * a phone.
+ * Aspect as a bare number, for the `--frame-ratio` custom property the `.game-frame` rule in
+ * index.css multiplies the available height by.
  */
-const CHROME = '5.5rem';
-const FRAME_MAX_WIDTH = {
-  landscape: `min(1700px, calc((100vh - ${CHROME}) * 16 / 9))`,
-  portrait: `min(100%, calc((100vh - ${CHROME}) * 9 / 16))`,
-};
+const FRAME_RATIO = { landscape: 16 / 9, portrait: 9 / 16 };
 
 /**
  * Phase 7 — Feeding Frenzy.
@@ -50,6 +45,7 @@ export default function TycoonGame() {
     headSources,
     addPoints,
     syncTycoon,
+    resetTycoon,
     setAnimalPhoto,
     clearAnimalPhoto,
   } = usePlayerState();
@@ -152,12 +148,13 @@ export default function TycoonGame() {
         </p>
       </header>
 
-      <div className="flex min-h-0 flex-1 justify-center">
-        {/* Fits the frame to whichever of width or height runs out first, so a laptop gets a
-            big scene and a phone gets a tall one, rather than either being letterboxed. */}
+      <div className="game-frame-area flex min-h-0 flex-1 justify-center">
+        {/* Fits the frame to whichever of width or height runs out first, measured against the
+            box the shell gives us rather than the viewport — so a laptop gets a big scene and a
+            phone gets a tall one, and neither is letterboxed or clipped. */}
         <div
-          className="relative w-full self-center"
-          style={{ aspectRatio: layout.aspect, maxWidth: FRAME_MAX_WIDTH[layout.id] }}
+          className="game-frame relative self-center"
+          style={{ aspectRatio: layout.aspect, '--frame-ratio': FRAME_RATIO[layout.id] }}
         >
           <RestaurantScene
             state={state}
@@ -195,6 +192,7 @@ export default function TycoonGame() {
               roster={roster}
               headSources={headSources}
               onStart={actions.startDay}
+              onReset={resetTycoon}
               onSetPhoto={setAnimalPhoto}
               onClearPhoto={clearAnimalPhoto}
             />
