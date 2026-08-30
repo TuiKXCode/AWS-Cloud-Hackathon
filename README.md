@@ -1,13 +1,138 @@
-# AWS Cloud Hackathon
+# Mandai Echoes
 
-Shared workspace for our AWS Cloud Hackathon project.
+A single-page web app for visitors to **Mandai Wildlife Reserve, Singapore**. It tells you
+why the animal in front of you matters — conservation status and ecosystem role — while
+solving the everyday logistics of a zoo visit, and wraps the whole thing in a light game:
+photograph animals at checkpoints to collect them, earn a redeemable prize, then cook for
+them in a restaurant mini-game.
+
+Runs entirely in the browser. No backend, no accounts, no cloud calls — all state lives in
+`localStorage`. See [`docs/PRD-mandai-echoes.md`](docs/PRD-mandai-echoes.md) for the full spec.
 
 - **Repository:** https://github.com/TuiKXCode/AWS-Cloud-Hackathon
 - **Visibility:** Public (anyone can read; only invited collaborators can push)
 
+**Jump to: [Run it](#running-the-app) · [Demo script](#demoing-it) · [Troubleshooting the app](#troubleshooting-the-app)**
+
 ---
 
-## 1. Getting access
+## Running the app
+
+You need **Node 18+** (20+ recommended). Check with `node -v`.
+
+```bash
+git clone https://github.com/TuiKXCode/AWS-Cloud-Hackathon.git
+cd AWS-Cloud-Hackathon
+npm install
+npm run dev
+```
+
+Open the URL it prints — <http://localhost:5173>. That is the whole setup; there is
+nothing to configure, no `.env`, no AWS credentials.
+
+### All the commands
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Dev server on <http://localhost:5173>, hot reload. **Localhost only.** |
+| `npm run dev:lan` | Same, but reachable from your phone on the same Wi-Fi — see below |
+| `npm run build` | Type-check and build the production bundle into `dist/` |
+| `npm run preview` | Serve the built `dist/` locally — use this to check the real build |
+| `npm test` | Run the test suite once (321 tests) |
+| `npm run test:watch` | Re-run tests as you edit |
+
+`npm run dev` deliberately binds to localhost only. Vite 5 carries a known advisory
+(GHSA-67mh-4wv8-2f99) where any site you visit can talk to your dev server, so exposing it
+to the network is opt-in via `dev:lan`.
+
+### Showing it on a phone
+
+```bash
+npm run dev:lan
+```
+
+Vite prints a **Network** URL like `http://192.168.1.42:5173`. Open that on a phone on the
+same Wi-Fi. If it does not load, your firewall is blocking port 5173 — on Windows, allow
+Node through on Private networks.
+
+> **Expect geolocation and the camera to be blocked over a LAN address.** Browsers only
+> grant those on a secure origin (HTTPS, or localhost). The app is built for this: it falls
+> back to a default location and the **Demo location** dropdown drives everything, which is
+> how you should demo it anyway. Nothing breaks — you just cannot take a real photo.
+>
+> To exercise the camera and real GPS, either open it on `localhost` on the machine itself,
+> or put the built `dist/` behind any HTTPS host.
+
+---
+
+## Demoing it
+
+The app opens on the **Nearby Exhibit** tab. Everything is driven by the **Demo location**
+dropdown at the top — you never need to physically move.
+
+1. **Nearby Exhibit** — pick *Malayan Tiger Enclosure* from the dropdown. The card follows
+   the location: conservation status, a fun fact, feeding times. Tap the sound button for
+   an audio cue, and **Take Photo** to collect the animal (needs a secure origin, see above).
+2. **Facilities** — restrooms, nursing room, water refill, sorted nearest-first with
+   distances and a landmark to walk toward.
+3. **Food Web** — the trophic diagram. **Select a node first**, then press *Simulate
+   Ecosystem Collapse*: the node dims and everything that depends on it shows what its loss
+   would mean. Try removing **bamboo groves** to see the Giant Panda react.
+4. **Dining** — filter venues by Halal / Vegetarian / Air-Conditioned / Kid-Friendly.
+5. **Collection / My Animals** — what you have photographed, and the generated sprites.
+6. **Kitchen** — *Ah Meng's Kitchen*, the restaurant game. Animals order food matching their
+   real diet. Tap a **＋** counter to send the chef for an ingredient, tap the animal you are
+   feeding, then **SERVE**. Points from a finished day feed the same questline bar at the top.
+
+**Progress bar and the prize.** The bar tracks progress toward 140 points — 20 per exhibit
+photographed, plus whatever the game earns. Hit 140 and a redemption voucher appears with a
+generated code.
+
+**On a phone**, the Kitchen tab opens straight into fullscreen, because the board needs the
+whole screen to be playable. *Exit fullscreen* returns to the tabs. On a desktop it stays
+inline.
+
+### Resetting between demos
+
+All progress lives under a single `localStorage` key, `mandaiEchoes.playerState`.
+
+- **Restart the restaurant only:** the game's briefing screen has *Start over from Day 1*.
+  Photographed animals and their points survive.
+- **Wipe everything:** open DevTools console and run
+  ```js
+  localStorage.removeItem('mandaiEchoes.playerState'); location.reload();
+  ```
+  A private/incognito window is the quickest way to demo from a clean slate.
+
+---
+
+## Troubleshooting the app
+
+**Blank page after `npm run dev`** — you are probably on Node 16. `node -v` must be 18+.
+
+**`npm install` fails** — delete `node_modules` and `package-lock.json`, then `npm install`
+again. If you only want a reproducible install, use `npm ci`.
+
+**The game opens on Day 3 (or any day but 1)** — that is your saved progress; the run
+persists on purpose. Use *Start over from Day 1* on the briefing screen.
+
+**"Location permission was not granted"** — expected when you decline the browser prompt or
+open the app over a LAN address. Use the **Demo location** dropdown; everything works.
+
+**Take Photo does nothing** — the camera needs a secure origin. Use `localhost` or HTTPS.
+The photo flow also falls back to tagging the nearest exhibit if recognition is unsure, so
+it never dead-ends during a demo.
+
+**Port 5173 already in use** — something else is running. `npm run dev -- --port 5174`.
+
+---
+
+## Contributor setup (repo access and Kiro)
+
+Everything below is about getting *push* access and setting up the Kiro IDE. If you only
+want to run the app, you are done — see [Running the app](#running-the-app).
+
+### 1. Getting access
 
 You can *read and clone* this repo without an invite because it is public. To **push**
 you need to be added as a collaborator.
@@ -18,13 +143,13 @@ invitation — accept it, or go to
 
 ---
 
-## 2. Install Kiro
+### 2. Install Kiro
 
 Download and install Kiro for your OS from <https://kiro.dev/downloads>, then launch it.
 
 ---
 
-## 3. Sign in to Kiro
+### 3. Sign in to Kiro
 
 On first launch Kiro asks you to sign in. Pick any of:
 
@@ -42,12 +167,12 @@ A browser window opens, you approve, and it hands you back to the IDE.
 
 ---
 
-## 4. Authenticate GitHub for git operations
+### 4. Authenticate GitHub for git operations
 
 Kiro is built on Code OSS, so it has the same built-in Git and GitHub integration as
 VS Code. Pick **one** of the three options below.
 
-### Option A — Built-in GitHub sign-in (recommended, no tokens to manage)
+#### Option A — Built-in GitHub sign-in (recommended, no tokens to manage)
 
 1. Open the **Accounts** icon at the bottom of the left activity bar (the person icon).
 2. Choose **Sign in with GitHub** (or click **Sign in** when Kiro prompts you the first
@@ -58,7 +183,7 @@ VS Code. Pick **one** of the three options below.
 Kiro stores the credential in your OS keychain (Windows Credential Manager / macOS
 Keychain / libsecret) and reuses it for clone, fetch, pull and push.
 
-### Option B — GitHub CLI
+#### Option B — GitHub CLI
 
 Works well if you already live in a terminal.
 
@@ -82,7 +207,7 @@ Verify:
 gh auth status
 ```
 
-### Option C — Personal Access Token (fallback)
+#### Option C — Personal Access Token (fallback)
 
 Use this if the browser flow is blocked on your machine.
 
@@ -102,9 +227,9 @@ git config --global credential.helper osxkeychain # macOS
 
 ---
 
-## 5. Clone the repository in Kiro
+### 5. Clone the repository in Kiro
 
-### From the Kiro UI
+#### From the Kiro UI
 
 1. **File → Open Folder** is *not* what you want — instead open the Source Control view
    (`Ctrl+Shift+G`, or `Cmd+Shift+G` on macOS).
@@ -120,7 +245,7 @@ git config --global credential.helper osxkeychain # macOS
 
 The Command Palette route works too: `Ctrl+Shift+P` → **Git: Clone**.
 
-### From a terminal
+#### From a terminal
 
 ```bash
 git clone https://github.com/TuiKXCode/AWS-Cloud-Hackathon.git
@@ -129,7 +254,7 @@ cd AWS-Cloud-Hackathon
 
 Then in Kiro: **File → Open Folder** and select `AWS-Cloud-Hackathon`.
 
-### Confirm it worked
+#### Confirm it worked
 
 ```bash
 git remote -v            # should print the TuiKXCode/AWS-Cloud-Hackathon URL twice
@@ -138,7 +263,7 @@ git status               # should print "On branch main ... nothing to commit"
 
 ---
 
-## 6. Set your git identity
+### 6. Set your git identity
 
 Do this once per machine, or your commits will be attributed to the wrong person:
 
@@ -152,7 +277,7 @@ Use the email that is on your GitHub account (or your GitHub `noreply` address f
 
 ---
 
-## 7. Day-to-day workflow
+### 7. Day-to-day workflow
 
 Please **do not commit straight to `main`.** Branch, push, open a PR.
 
@@ -173,7 +298,7 @@ terminal, or the Source Control view in Kiro.
 
 ---
 
-## Troubleshooting
+### Troubleshooting git and Kiro
 
 **`remote: Permission to TuiKXCode/AWS-Cloud-Hackathon.git denied`**
 You have not accepted the collaborator invite, or git is using the wrong account.
