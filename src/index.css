@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    /* Prevent the pull-to-refresh / rubber-band scroll from fighting rapid taps
+       on the prep station during a shift. */
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
