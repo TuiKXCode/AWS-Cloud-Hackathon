@@ -1,0 +1,126 @@
+{
+  "pbtResults": {
+    "1.2 Write property tests for Food Web Engine (`src/engine/__tests__/foodWebEngine.property.test.ts`)": {
+      "status": "passed",
+      "lastRunTimestamp": 1788007358859
+    }
+  },
+  "executionHistory": {
+    "1.1 Create `src/engine/foodWebEngine.ts` with `extractGraph` and `findDependents` functions": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007001915
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007008156
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007383836
+      }
+    ],
+    "2.1 Create `src/engine/diningFilterEngine.ts` with `filterByTags`, `sortByDistance`, and `filterAndSort` functions": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007001939
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007009301
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007382581
+      }
+    ],
+    "3. Checkpoint — Verify engines": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007001956
+      },
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007390791
+      }
+    ],
+    "4.1 Create `src/components/TrophicNode.tsx` component": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007001989
+      }
+    ],
+    "4.2 Create `src/components/EcosystemCollapseToggle.tsx` component": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007002005
+      }
+    ],
+    "4.3 Create `src/components/FoodWebSimulator.tsx` component": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007002019
+      }
+    ],
+    "5.1 Create `src/components/FilterChip.tsx` component": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007002035
+      }
+    ],
+    "5.2 Create `src/components/DiningTab.tsx` component": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007002051
+      }
+    ],
+    "6. Checkpoint — Verify all components": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007002068
+      }
+    ],
+    "7.1 Wire Food Web and Dining Tab into the app navigation": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007002087
+      }
+    ],
+    "8. Final Checkpoint — Ensure all tests pass": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007002107
+      }
+    ],
+    "2. Implement Dining Filter Engine": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007382611
+      }
+    ],
+    "1. Implement Food Web Engine": [
+      {
+        "executionId": "61ae85e5-ed02-4dc5-b1b9-c0045b222585",
+        "chatSessionId": "sess_f5904d64-bedc-49be-8572-0622a7654bcd",
+        "timestamp": 1788007383855
+      }
+    ]
+  }
+}

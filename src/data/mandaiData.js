@@ -1,21 +1,28 @@
 // src/data/mandaiData.js
 //
-// Static reference data. The exhibit SHAPE is fixed by the PRD (§3) — do not redesign it.
+// The single static reference-data module for the whole app (PRD §2, §3). The exhibit
+// SHAPE is fixed by the PRD — do not redesign it.
 //
-// Phase 7 (Feeding Frenzy) reads: id, name, dietTags, points, and the presentation extras
-// at the bottom of each entry (emoji, palette). Everything else is here so the file stays
-// schema-true for Phases 1-6, which own this data properly.
+// Phases 1-6 read: lat/lng (location engine), iucnStatus, funFact, feedingTimes, diet,
+// trophicRole/dependsOn/predatorOf/ecosystemImpactIfRemoved (food web), imagenetLabels
+// (classifier), spriteBodyAsset (sprite compositor), points (questline).
+//
+// Phase 7 (Ah Meng's Kitchen) reads: id, name, dietTags, points, and the presentation
+// extras at the bottom of each entry (emoji, palette).
 //
 // `dietTags` is the whole hinge of the game: an animal will only ever order food whose
 // `satisfies` tags overlap its diet, which is what makes "cook what its real diet needs"
 // true rather than decorative.
+//
+// Coordinates sit on the same grid as `facilities`, `dining` and `demoLocations` below,
+// so the Phase 1 distance sort stays coherent.
 
 export const exhibits = [
   {
     id: 'malayan-tiger',
     name: 'Malayan Tiger',
-    lat: 1.4048,
-    lng: 103.7925,
+    lat: 1.41,
+    lng: 103.792,
     iucnStatus: 'Critically Endangered',
     funFact:
       'Fewer than 150 Malayan tigers are left in the wild. No two have the same stripe pattern — it works like a fingerprint.',
@@ -38,8 +45,8 @@ export const exhibits = [
   {
     id: 'lion',
     name: 'African Lion',
-    lat: 1.4051,
-    lng: 103.7936,
+    lat: 1.4083,
+    lng: 103.7938,
     iucnStatus: 'Vulnerable',
     funFact:
       "A lion's roar carries up to 8km. The lionesses do most of the hunting while the males hold territory.",
@@ -61,8 +68,8 @@ export const exhibits = [
   {
     id: 'giant-panda',
     name: 'Giant Panda',
-    lat: 1.4039,
-    lng: 103.7908,
+    lat: 1.4055,
+    lng: 103.79,
     iucnStatus: 'Vulnerable',
     funFact:
       'A panda spends up to 14 hours a day eating, and gets through 12–38kg of bamboo to do it.',
@@ -84,8 +91,8 @@ export const exhibits = [
   {
     id: 'asian-elephant',
     name: 'Asian Elephant',
-    lat: 1.4062,
-    lng: 103.7941,
+    lat: 1.403,
+    lng: 103.7955,
     iucnStatus: 'Endangered',
     funFact:
       'An elephant drinks up to 200 litres a day and can pick up a single blade of grass with its trunk tip.',
@@ -107,8 +114,8 @@ export const exhibits = [
   {
     id: 'flamingo',
     name: 'Greater Flamingo',
-    lat: 1.4035,
-    lng: 103.7919,
+    lat: 1.4065,
+    lng: 103.7885,
     iucnStatus: 'Least Concern',
     funFact:
       'Flamingos are born grey. The pink comes from carotenoids in the brine shrimp and algae they filter-feed.',
@@ -130,8 +137,8 @@ export const exhibits = [
   {
     id: 'giraffe',
     name: 'Reticulated Giraffe',
-    lat: 1.4057,
-    lng: 103.7912,
+    lat: 1.4074,
+    lng: 103.7902,
     iucnStatus: 'Endangered',
     funFact:
       'A giraffe has the same seven neck vertebrae you do — each one is just about 25cm long.',
@@ -176,9 +183,88 @@ export const exhibits = [
 ];
 
 export const questlineConfig = {
-  totalPointsToComplete: 100,
+  // Sum of all 7 exhibits' `points` (7 x 20). Photographing every exhibit completes the
+  // questline on its own; Phase 7 order points get the visitor there sooner.
+  totalPointsToComplete: 140,
   prizeLabel: 'Free scoop at Ah Meng Restaurant',
 };
+
+export const facilities = [
+  {
+    id: 'restroom-1',
+    type: 'restroom',
+    name: 'Central Restrooms',
+    lat: 1.4058,
+    lng: 103.7912,
+    nearestLandmark: 'Giant Panda Forest',
+  },
+  {
+    id: 'nursing-1',
+    type: 'nursing',
+    name: 'Family Nursing Room',
+    lat: 1.4047,
+    lng: 103.7935,
+    nearestLandmark: 'Pygmy Hippo Enclosure',
+  },
+  {
+    id: 'accessible-1',
+    type: 'accessible',
+    name: 'Accessible Restroom & Ramp',
+    lat: 1.4096,
+    lng: 103.7918,
+    nearestLandmark: 'Malayan Tiger Enclosure',
+  },
+  {
+    id: 'water-refill-1',
+    type: 'water-refill',
+    name: 'Water Refill Station',
+    lat: 1.4068,
+    lng: 103.7888,
+    nearestLandmark: 'Flamingo Lagoon',
+  },
+];
+
+export const dining = [
+  {
+    id: 'ah-meng',
+    name: 'Ah Meng Restaurant',
+    lat: 1.4052,
+    lng: 103.7905,
+    tags: ['halal', 'air-conditioned', 'kid-friendly'],
+    hours: '10:00–18:00',
+    topPicks: ['Nasi Lemak', 'Roti Prata'],
+  },
+  {
+    id: 'canopy-cafe',
+    name: 'Canopy Green Cafe',
+    lat: 1.4034,
+    lng: 103.795,
+    tags: ['vegetarian', 'air-conditioned'],
+    hours: '09:00–17:00',
+    topPicks: ['Garden Salad Bowl', 'Veggie Wrap'],
+  },
+  {
+    id: 'riverside-kiosk',
+    name: 'Riverside Snack Kiosk',
+    lat: 1.4062,
+    lng: 103.789,
+    tags: ['halal', 'kid-friendly'],
+    hours: '10:00–19:00',
+    topPicks: ['Chicken Nuggets', 'Ice Cream'],
+  },
+];
+
+// One entry per exhibit, plus a couple of landmark points (PRD §3).
+export const demoLocations = [
+  { label: 'Pygmy Hippo Enclosure', lat: 1.4043, lng: 103.793 },
+  { label: 'Malayan Tiger Enclosure', lat: 1.41, lng: 103.792 },
+  { label: 'African Lion Habitat', lat: 1.4083, lng: 103.7938 },
+  { label: 'Giant Panda Forest', lat: 1.4055, lng: 103.79 },
+  { label: 'Asian Elephant Trail', lat: 1.403, lng: 103.7955 },
+  { label: 'Flamingo Lagoon', lat: 1.4065, lng: 103.7885 },
+  { label: 'Giraffe Savannah', lat: 1.4074, lng: 103.7902 },
+  { label: 'Night Safari Entrance', lat: 1.4108, lng: 103.788 },
+];
 
 export const exhibitsById = exhibits.reduce((acc, exhibit) => {
   acc[exhibit.id] = exhibit;

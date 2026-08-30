@@ -10,6 +10,10 @@
   }
 
   body {
+    /* Matches the app shell's cream ground so the page behind the 640px column
+       does not flash white on overscroll. */
+    background-color: #f4efe6;
+
     /* Prevent the pull-to-refresh / rubber-band scroll from fighting rapid taps
        on the prep station during a shift. */
     overscroll-behavior: none;

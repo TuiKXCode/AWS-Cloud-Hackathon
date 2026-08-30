@@ -26,6 +26,7 @@ import {
   moodFromPatience,
   pickupSpotForStation,
 } from './constants.js';
+import { findPath, navFor } from './navigation.js';
 import { generateOrder, plateMatchesOrder } from './orders.js';
 
 const { ENTERING, SEATED, ORDERING, EATING, LEAVING, STORMING } = CUSTOMER_STATE;
@@ -73,6 +74,9 @@ export function createInitialState({
       targetStationId: null,
       /** Counts down while he is picking something up. */
       dwell: 0,
+      /** Route to the current target, planned by navigation.js. Null means "plan one". */
+      path: null,
+      goal: null,
     },
 
     plate: [],
@@ -153,30 +157,73 @@ function seatMap(layout, upgrades) {
   return map;
 }
 
-function walk(entity, target, speed, dt) {
-  const dx = target.x - entity.x;
-  const dy = target.y - entity.y;
-  const distance = Math.hypot(dx, dy);
+/**
+ * Move an entity one tick along a route, planning that route the first time it is asked for a
+ * given target and re-using it afterwards.
+ *
+ * This replaced a straight line from A to B. The straight line was why the chef walked through
+ * the chiller and animals arrived through the wall: it had no idea anything was there. Now the
+ * route comes from A* over the layout's walkable grid, which treats the stone wall as solid
+ * except at the door, and the counters, belt, bench and tables as solid full stop.
+ */
+function walk(entity, target, speed, dt, nav) {
+  const stale =
+    !entity.path || !entity.goal || entity.goal.x !== target.x || entity.goal.y !== target.y;
 
-  if (distance <= TIMING.arriveEpsilon) {
-    return [{ ...entity, x: target.x, y: target.y, moving: false, atTarget: true }, true];
+  let next = entity;
+  if (stale) {
+    next = { ...entity, path: findPath(nav, entity, target), goal: { x: target.x, y: target.y } };
   }
 
-  const step = Math.min(distance, speed * dt);
-  const facing = Math.abs(dx) > 0.4 ? (dx > 0 ? 1 : -1) : entity.facing;
+  let { x, y, facing } = next;
+  let route = next.path;
+  let budget = speed * dt;
+  let stepped = 0;
+
+  while (budget > 0 && route.length > 0) {
+    const waypoint = route[0];
+    const dx = waypoint.x - x;
+    const dy = waypoint.y - y;
+    const distance = Math.hypot(dx, dy);
+
+    if (distance <= 1e-4) {
+      route = route.slice(1);
+      continue;
+    }
+
+    const step = Math.min(distance, budget);
+    x += (dx / distance) * step;
+    y += (dy / distance) * step;
+    budget -= step;
+    stepped += step;
+    if (Math.abs(dx) > 0.4) facing = dx > 0 ? 1 : -1;
+
+    // Close enough to this corner: turn toward the next one.
+    if (distance - step <= (route.length === 1 ? TIMING.arriveEpsilon : 0.25)) {
+      route = route.slice(1);
+    }
+  }
+
+  const arrived = route.length === 0;
 
   return [
     {
-      ...entity,
-      x: entity.x + (dx / distance) * step,
-      y: entity.y + (dy / distance) * step,
+      ...next,
+      x: arrived ? target.x : x,
+      y: arrived ? target.y : y,
       facing,
-      moving: true,
-      atTarget: false,
-      walkPhase: entity.walkPhase + dt * 11,
+      path: route,
+      moving: !arrived && stepped > 0,
+      atTarget: arrived,
+      walkPhase: arrived ? next.walkPhase : next.walkPhase + dt * 11,
     },
-    false,
+    arrived,
   ];
+}
+
+/** Forget any planned route, so the next tick re-plans against a changed world. */
+function replan(entity) {
+  return { ...entity, path: null, goal: null };
 }
 
 function customerTarget(layout, customer, seats) {
@@ -208,7 +255,7 @@ function chefTarget(layout, chef, customers, seats) {
  * Returns the moved chef plus whatever landed this tick: `delivered` is the customer whose
  * food just arrived, `stocked` is the ingredients just put down on the plating bench.
  */
-function stepChef(layout, chef, customers, seats, dt) {
+function stepChef(layout, nav, chef, customers, seats, dt) {
   // Standing at a counter, picking something up.
   if (chef.dwell > 0) {
     return {
@@ -222,7 +269,8 @@ function stepChef(layout, chef, customers, seats, dt) {
     chef,
     chefTarget(layout, chef, customers, seats),
     TIMING.chefWalkSpeed,
-    dt
+    dt,
+    nav
   );
   let next = moved;
   let delivered = null;
@@ -371,6 +419,8 @@ function makeCustomer(layout, id, exhibit, seat) {
     order: null,
     awaitingDelivery: false,
     tray: [],
+    path: null,
+    goal: null,
   };
 }
 
@@ -383,12 +433,14 @@ function tick(state, dt) {
   draft.elapsed = state.elapsed + dt;
 
   const { layout } = state;
+  const nav = navFor(layout, state.upgrades);
   const seats = seatMap(layout, state.upgrades);
   const next = [];
 
   /* --- chef ------------------------------------------------------------- */
   const { chef, delivered: deliveredTo, stocked } = stepChef(
     layout,
+    nav,
     state.chef,
     state.customers,
     seats,
@@ -407,7 +459,8 @@ function tick(state, dt) {
       customer,
       customerTarget(layout, customer, seats),
       TIMING.customerWalkSpeed,
-      dt
+      dt,
+      nav
     );
     customer = moved;
 
@@ -591,19 +644,19 @@ export function gameReducer(state, action) {
       return {
         ...state,
         layout,
-        chef: {
+        chef: replan({
           ...state.chef,
           x: layout.chefHome.x,
           y: layout.chefHome.y,
           moving: false,
           atTarget: false,
-        },
+        }),
         customers: state.customers.map((customer) => {
           const seat = seats.get(customer.seatId);
-          if (!seat) return customer;
+          if (!seat) return replan(customer);
           return customer.state === ENTERING
-            ? { ...customer, x: layout.arch.x, y: layout.arch.y, atTarget: false }
-            : { ...customer, x: seat.x, y: seat.y, moving: false, atTarget: true };
+            ? replan({ ...customer, x: layout.arch.x, y: layout.arch.y, atTarget: false })
+            : replan({ ...customer, x: seat.x, y: seat.y, moving: false, atTarget: true });
         }),
       };
     }
@@ -768,6 +821,9 @@ export function gameReducer(state, action) {
 
       draft.funds = state.funds - upgrade.cost;
       draft.upgrades = { ...state.upgrades, [upgrade.id]: true };
+      // New furniture just appeared, so anyone mid-walk needs a fresh route around it.
+      draft.chef = replan(state.chef);
+      draft.customers = state.customers.map(replan);
       pushToast(draft, `${upgrade.label} unlocked`, 'good');
       return draft;
     }

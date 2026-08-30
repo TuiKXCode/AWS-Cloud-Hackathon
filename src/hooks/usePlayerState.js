@@ -1,82 +1,36 @@
 // src/hooks/usePlayerState.js
 //
-// The one and only bridge to persisted player state (PRD §3): a single localStorage key,
-// `mandaiEchoes.playerState`, holding { points, collectedAnimals, voucherRedeemed }.
+// The tycoon game's view onto persisted player state. The state itself lives behind
+// `src/engine/playerState.js`, the single gateway to the one localStorage key the PRD
+// allows (`mandaiEchoes.playerState`, §2/§3) — this hook only adds the React binding and
+// the game-shaped selectors on top.
 //
 // Phase 7's contract with the rest of the app:
 //   READS  `collectedAnimals` — which animals can walk in, and which photo to use as
-//          their portrait. Empty (Phases 4/6 not built yet) falls back to every exhibit
+//          their portrait. Empty (nothing photographed yet) falls back to every exhibit
 //          with drawn placeholder faces, so the game is playable standalone.
 //   WRITES `points` — the questline total. This only ever goes UP: a finished day adds
-//          what it earned. Upgrades are bought from a separate spendable balance so
-//          shopping can never eat into questline progress.
+//          what it earned. Upgrades are bought from a separate spendable balance
+//          (`tycoon.funds`) so shopping can never eat into questline progress.
 //
-// `tycoon: { day, funds, upgrades, bestDay }` is an additive field under the same key.
-// Readers that destructure the three documented keys are unaffected by it.
+// Every write is read-modify-write via `updatePlayerState`, because the Phase 4 capture
+// flow owns `collectedAnimals` on the same key and the two can interleave — the player
+// can photograph an animal and then open the game without a reload.
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { exhibits } from '../data/mandaiData.js';
+import {
+  STORAGE_KEY,
+  readPlayerState,
+  updatePlayerState,
+} from '../engine/playerState.js';
 
-export const STORAGE_KEY = 'mandaiEchoes.playerState';
-
-const EMPTY_TYCOON = { day: 1, funds: 0, upgrades: {}, bestDay: 0 };
-
-const EMPTY_STATE = {
-  points: 0,
-  collectedAnimals: [],
-  voucherRedeemed: false,
-  tycoon: EMPTY_TYCOON,
-};
-
-function safeStorage() {
-  try {
-    if (typeof window === 'undefined' || !window.localStorage) return null;
-    return window.localStorage;
-  } catch {
-    // Private mode / blocked storage. The game still runs, it just won't persist.
-    return null;
-  }
-}
-
-export function readPlayerState() {
-  const storage = safeStorage();
-  if (!storage) return { ...EMPTY_STATE };
-
-  try {
-    const raw = storage.getItem(STORAGE_KEY);
-    if (!raw) return { ...EMPTY_STATE };
-    const parsed = JSON.parse(raw);
-    return {
-      ...EMPTY_STATE,
-      ...parsed,
-      points: Number.isFinite(parsed?.points) ? parsed.points : 0,
-      collectedAnimals: Array.isArray(parsed?.collectedAnimals) ? parsed.collectedAnimals : [],
-      tycoon: {
-        ...EMPTY_TYCOON,
-        ...(parsed?.tycoon ?? {}),
-        upgrades: { ...(parsed?.tycoon?.upgrades ?? {}) },
-      },
-    };
-  } catch (error) {
-    console.warn('[mandaiEchoes] could not read player state, starting fresh', error);
-    return { ...EMPTY_STATE };
-  }
-}
-
-function writePlayerState(next) {
-  const storage = safeStorage();
-  if (!storage) return;
-  try {
-    storage.setItem(STORAGE_KEY, JSON.stringify(next));
-  } catch (error) {
-    console.warn('[mandaiEchoes] could not persist player state', error);
-  }
-}
+export { STORAGE_KEY, readPlayerState };
 
 export function usePlayerState() {
   const [playerState, setPlayerState] = useState(readPlayerState);
 
-  // Keep in step if another tab (or another phase of the app) touches the same key.
+  // Keep in step if another tab — or another phase of the app — touches the same key.
   useEffect(() => {
     const onStorage = (event) => {
       if (event.key === STORAGE_KEY) setPlayerState(readPlayerState());
@@ -85,29 +39,37 @@ export function usePlayerState() {
     return () => window.removeEventListener('storage', onStorage);
   }, []);
 
+  /**
+   * Apply a mutator to whatever is in storage right now, persist it, and adopt the
+   * result. Reading fresh rather than trusting our own React snapshot is what keeps a
+   * capture made since our last render from being reverted.
+   */
   const update = useCallback((mutator) => {
     setPlayerState((current) => {
-      const next = mutator(current);
-      if (next === current) return current;
-      writePlayerState(next);
-      return next;
+      const { state } = updatePlayerState((stored) => mutator(stored, current));
+      return state;
     });
   }, []);
 
   /**
    * End of day: add what was earned to the questline total. This only ever adds, so the
    * game can contribute to Phase 5 progress but never claw it back.
+   *
+   * `points` and `tycoon.earnedPoints` move together by the same delta, which is what
+   * preserves the invariant documented in playerState.js — the capture component of the
+   * total is left untouched, so Phase 4 can still recompute its own half independently.
    */
   const addPoints = useCallback(
     (pointsEarned) => {
       const gain = Math.max(0, Math.round(pointsEarned ?? 0));
       if (gain === 0) return;
-      update((current) => ({
-        ...current,
-        points: Math.max(0, current.points + gain),
+      update((stored) => ({
+        ...stored,
+        points: Math.max(0, stored.points + gain),
         tycoon: {
-          ...current.tycoon,
-          bestDay: Math.max(current.tycoon.bestDay ?? 0, gain),
+          ...stored.tycoon,
+          earnedPoints: Math.max(0, stored.tycoon.earnedPoints + gain),
+          bestDay: Math.max(stored.tycoon.bestDay ?? 0, gain),
         },
       }));
     },
@@ -117,14 +79,14 @@ export function usePlayerState() {
   /** Mid-day persistence for the shop: funds spent, upgrades owned. */
   const syncTycoon = useCallback(
     (patch) => {
-      update((current) => {
-        const nextTycoon = { ...current.tycoon, ...patch };
+      update((stored) => {
+        const nextTycoon = { ...stored.tycoon, ...patch };
         const unchanged =
-          nextTycoon.day === current.tycoon.day &&
-          nextTycoon.funds === current.tycoon.funds &&
-          JSON.stringify(nextTycoon.upgrades) === JSON.stringify(current.tycoon.upgrades);
-        if (unchanged) return current;
-        return { ...current, tycoon: nextTycoon };
+          nextTycoon.day === stored.tycoon.day &&
+          nextTycoon.funds === stored.tycoon.funds &&
+          JSON.stringify(nextTycoon.upgrades) === JSON.stringify(stored.tycoon.upgrades);
+        if (unchanged) return stored;
+        return { ...stored, tycoon: nextTycoon };
       });
     },
     [update]
@@ -136,8 +98,8 @@ export function usePlayerState() {
    */
   const setAnimalPhoto = useCallback(
     (exhibitId, photoDataUrl) => {
-      update((current) => {
-        const existing = current.collectedAnimals.find((entry) => entry.exhibitId === exhibitId);
+      update((stored) => {
+        const existing = stored.collectedAnimals.find((item) => item.exhibitId === exhibitId);
         const entry = {
           exhibitId,
           photoDataUrl,
@@ -146,9 +108,9 @@ export function usePlayerState() {
           capturedAt: new Date().toISOString(),
         };
         const collectedAnimals = existing
-          ? current.collectedAnimals.map((item) => (item.exhibitId === exhibitId ? entry : item))
-          : [...current.collectedAnimals, entry];
-        return { ...current, collectedAnimals };
+          ? stored.collectedAnimals.map((item) => (item.exhibitId === exhibitId ? entry : item))
+          : [...stored.collectedAnimals, entry];
+        return { ...stored, collectedAnimals };
       });
     },
     [update]
@@ -156,17 +118,19 @@ export function usePlayerState() {
 
   const clearAnimalPhoto = useCallback(
     (exhibitId) => {
-      update((current) => ({
-        ...current,
-        collectedAnimals: current.collectedAnimals.filter((entry) => entry.exhibitId !== exhibitId),
+      update((stored) => ({
+        ...stored,
+        collectedAnimals: stored.collectedAnimals.filter(
+          (entry) => entry.exhibitId !== exhibitId
+        ),
       }));
     },
     [update]
   );
 
   /**
-   * Who can walk in. Once Phases 4/6 exist this narrows to animals the player actually
-   * photographed; until then every exhibit is fair game.
+   * Who can walk in. Narrows to animals the player actually photographed; until they
+   * have photographed any, every exhibit is fair game so the game is never empty.
    *
    * Deliberately free of image data so its identity only changes when the cast changes —
    * the reducer re-seeds itself when this array changes.

@@ -73,7 +73,6 @@ const DIRT_TEXTURE = {
  */
 export const PavedFloor = memo(function PavedFloor({ layout }) {
   const { floor, wall, arch } = layout;
-  const exitGap = layout.paths[layout.paths.length - 1];
   const lastFloor = floor[floor.length - 1];
 
   return (
@@ -94,18 +93,8 @@ export const PavedFloor = memo(function PavedFloor({ layout }) {
         />
       ))}
 
-      {/* gap in the bottom wall where the service path leaves */}
-      <div
-        className="pointer-events-none absolute"
-        style={{
-          left: `${exitGap.left}%`,
-          top: `${lastFloor.bottom - 0.4}%`,
-          width: `${exitGap.right - exitGap.left}%`,
-          height: `${wall.y + 2}%`,
-          ...DIRT_TEXTURE,
-        }}
-      />
-      {/* and in the top wall under the arch */}
+      {/* The one gap: under the arch. The rest of the wall is solid, to the eye and to the
+          pathfinder — animals come in and out through the front door. */}
       <div
         className="pointer-events-none absolute"
         style={{

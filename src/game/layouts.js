@@ -2,17 +2,23 @@
 //
 // Two arrangements of the same restaurant, because a phone is not a squeezed laptop.
 //
-// Everything in the scene is positioned as a percentage of the frame, so the whole board can
-// be re-laid-out by swapping one of these objects. The landscape build is traced off the
-// 16:9 reference art: kitchen down the left, dining hall on the right. The portrait build is
-// traced off the mobile reference: kitchen across the middle, dining hall stacked underneath,
-// which is the only way tables stay big enough to hit with a thumb.
+// Everything in the scene is positioned as a percentage of the frame, so the whole board can be
+// re-laid-out by swapping one of these objects. The landscape build is traced off the 16:9
+// reference art: kitchen down the left, dining hall on the right. The portrait build is traced
+// off the mobile reference: kitchen across the middle, dining hall stacked underneath, which is
+// the only way tables stay big enough to hit with a thumb.
 //
 // x: 0 = left, 100 = right.  y: 0 = top (back of the room), 100 = bottom (front).
 //
-// Sprites are sized by WIDTH here rather than height. A share of the height means something
-// very different in a 16:9 box than in a 9:16 one, and getting that wrong is what made the
-// phone build feel like a diagram instead of a room.
+// Two rules these numbers have to satisfy, both enforced by navigation.js rather than by luck:
+//
+//   * `door` is the only gap in the wall, so animals can only get in and out through the arch.
+//   * Counters, the belt, the plating bench and the tables are solid, so the gaps between them
+//     have to be wide enough to walk down — roughly 5% or more.
+//
+// Sprites are sized by WIDTH here rather than height. A share of the height means something very
+// different in a 16:9 box than in a 9:16 one, and getting that wrong is what made the phone
+// build feel like a diagram instead of a room.
 
 /* ------------------------------------------------------------------ shared */
 
@@ -33,15 +39,16 @@ const LANDSCAPE_RAW = {
   wall: { x: 2.4, y: 2.4 },
 
   /**
-   * Two overlapping rectangles that union into an L: a kitchen strip along the bottom-left
-   * and the dining hall filling the right. Drawing it this way lets the stone wall hug the
-   * real silhouette instead of boxing everything in.
+   * Two overlapping rectangles that union into an L: a kitchen strip along the bottom-left and
+   * the dining hall filling the right. Drawing it this way lets the stone wall hug the real
+   * silhouette instead of boxing everything in, and it leaves the kitchen open to the hall.
    */
   floor: [
     { left: 10.5, right: 57, top: 49.5, bottom: 91 },
     { left: 47, right: 96.5, top: 25, bottom: 91 },
   ],
 
+  /** Decorative only — nobody walks on the patio, so the shop can live there undisturbed. */
   patio: { left: 9, right: 45.5, top: 11.5, bottom: 49.5 },
   patioSlots: {
     grillStation: { x: 19.5, y: 34, w: 15, h: 15 },
@@ -49,7 +56,10 @@ const LANDSCAPE_RAW = {
   },
 
   arch: { x: 71, y: 19, w: 13.5, h: 21 },
-  exit: { x: 71, y: -16 },
+  /** The one hole in the wall. Everything else is solid to the pathfinder. */
+  door: { left: 65, right: 77, top: 21.5, bottom: 26 },
+  /** Just off the top of the frame, but still on the arrival path so it is reachable. */
+  exit: { x: 71, y: 0.5 },
   queueSpots: [
     { x: 79, y: 19 },
     { x: 86, y: 14 },
@@ -65,10 +75,8 @@ const LANDSCAPE_RAW = {
   },
   stationHeight: 26,
   /**
-   * The chef's lane. Level with `chefHome` and above the plating bench, so every fetch is a
-   * clean slide across the front of the kitchen — no route from the bench to a counter, or
-   * between two counters, crosses any furniture. Straight-line movement with no pathfinding
-   * only stays honest if the layout cooperates.
+   * The chef's lane. Level with `chefHome`, below the counters and above the plating bench, so a
+   * fetch is a clean slide across the front of the kitchen with nothing in the way.
    */
   stationLaneY: 78,
 
@@ -90,12 +98,13 @@ const LANDSCAPE_RAW = {
   ],
   planterHeight: 11,
 
+  /** Extra table goes in the middle of the hall, with 7.5% of walking room either side of it. */
   tables: [
     { id: 'table-1', x: 65, y: 42, unlockedBy: null },
     { id: 'table-2', x: 84, y: 42, unlockedBy: null },
     { id: 'table-3', x: 65, y: 76, unlockedBy: null },
     { id: 'table-4', x: 84, y: 76, unlockedBy: null },
-    { id: 'table-5', x: 36, y: 34, unlockedBy: 'extraTable', outdoor: true },
+    { id: 'table-5', x: 74.5, y: 59, unlockedBy: 'extraTable' },
   ],
   tableSize: { w: 15, h: 9.5 },
   seatOffset: { x: 7, y: 0.5 },
@@ -111,13 +120,12 @@ const LANDSCAPE_RAW = {
   serve: { x: 50, y: 90 },
   picker: { mode: 'popover', minX: 12, maxX: 88, gap: 15 },
 
-  /** Dirt the guests arrive along, drawn under the canopy. */
+  /** Dirt the guests arrive along. The last strip is outside the wall and purely scenery. */
   paths: [
     { left: 55, right: 101, top: -4, bottom: 9.5 },
     { left: 62.5, right: 92, top: 8, bottom: 26 },
-    { left: 55, right: 63.5, top: 88, bottom: 102 },
+    { left: 55, right: 63.5, top: 93, bottom: 102 },
   ],
-  /** Where the canopy band breaks so the path is not buried under leaves. */
   canopyGaps: { top: [[57, 99]], bottom: [], left: [], right: [[-4, 24]] },
   palms: [
     { x: 1.5, y: 34, h: 46, flip: true },
@@ -146,79 +154,83 @@ const PORTRAIT_RAW = {
 
   wall: { x: 3.6, y: 2 },
 
-  /** One rectangle in portrait — the kitchen row lives inside the walls, up at the top. */
-  floor: [{ left: 7, right: 93, top: 40, bottom: 92 }],
+  /** One rectangle in portrait: kitchen row along the top of it, dining hall filling the rest. */
+  floor: [{ left: 7, right: 93, top: 35, bottom: 92 }],
 
-  patio: { left: 6, right: 72, top: 11.5, bottom: 40 },
+  patio: { left: 6, right: 72, top: 10, bottom: 35 },
   patioSlots: {
-    grillStation: { x: 20, y: 26, w: 26, h: 8 },
-    extraTable: { x: 50, y: 26, w: 26, h: 8 },
+    grillStation: { x: 20, y: 24, w: 26, h: 7 },
+    extraTable: { x: 50, y: 24, w: 26, h: 7 },
   },
 
-  arch: { x: 80, y: 35, w: 15.5, h: 9.4 },
-  exit: { x: 80, y: 2 },
+  arch: { x: 80, y: 30, w: 15.5, h: 9.4 },
+  door: { left: 73.5, right: 86.5, top: 31.5, bottom: 36 },
+  exit: { x: 89, y: 0.5 },
   /** Stacked down the path rather than side by side — it reads as a queue at the gate. */
   queueSpots: [
-    { x: 89, y: 29 },
-    { x: 89, y: 21 },
+    { x: 89, y: 26 },
+    { x: 89, y: 18 },
   ],
 
-  chefHome: { x: 62, y: 54 },
-  platingBench: { x: 28, y: 57, w: 44, h: 5 },
+  chefHome: { x: 60, y: 49.5 },
+  platingBench: { x: 25, y: 53, w: 34, h: 4 },
 
   stations: {
-    butcher: { x: 16, y: 43, w: 15 },
-    cold: { x: 33, y: 43, w: 17 },
-    greens: { x: 50, y: 43, w: 15 },
+    butcher: { x: 14, y: 42, w: 13 },
+    cold: { x: 31, y: 42, w: 13 },
+    greens: { x: 48, y: 42, w: 13 },
   },
   stationHeight: 13,
-  stationLaneY: 54,
+  stationLaneY: 49.5,
 
   conveyor: {
-    x: 67,
+    x: 62,
     w: 7,
-    top: 30,
-    bottom: 43.5,
-    arm: { left: 59, right: 70.5, y: 45.5, h: 4 },
+    top: 28,
+    bottom: 43,
+    arm: { left: 56, right: 65.5, y: 45, h: 4 },
   },
-  drinksCase: { x: 67, y: 26, w: 10, h: 7 },
+  drinksCase: { x: 62, y: 20, w: 10, h: 7 },
 
   planters: [
-    { x: 11, y: 38 },
-    { x: 66, y: 38 },
-    { x: 11, y: 68 },
-    { x: 89, y: 68 },
+    { x: 11, y: 32 },
+    { x: 66, y: 32 },
+    { x: 9, y: 64 },
+    { x: 91, y: 64 },
   ],
   planterHeight: 6,
 
+  /**
+   * Three columns, two rows, with the middle of the back row unlocked by the upgrade. The empty
+   * columns either side of it are the corridors the chef and the guests walk down.
+   */
   tables: [
-    { id: 'table-1', x: 27, y: 62, unlockedBy: null },
-    { id: 'table-2', x: 73, y: 62, unlockedBy: null },
-    { id: 'table-3', x: 27, y: 79, unlockedBy: null },
-    { id: 'table-4', x: 73, y: 79, unlockedBy: null },
-    { id: 'table-5', x: 50, y: 26, unlockedBy: 'extraTable', outdoor: true },
+    { id: 'table-1', x: 21, y: 72, unlockedBy: null },
+    { id: 'table-2', x: 79, y: 72, unlockedBy: null },
+    { id: 'table-3', x: 21, y: 85, unlockedBy: null },
+    { id: 'table-4', x: 79, y: 85, unlockedBy: null },
+    { id: 'table-5', x: 50, y: 72, unlockedBy: 'extraTable' },
   ],
   tableSize: { w: 21, h: 6 },
   seatOffset: { x: 9.5, y: -0.5 },
-  chairOffsets: FOUR_CHAIRS(9.5, -2.8, 4),
-  chairHeight: 6,
-  serviceOffset: { x: 2, y: 6 },
+  chairOffsets: FOUR_CHAIRS(9.5, -2.5, 3.5),
+  chairHeight: 5,
+  serviceOffset: { x: 2, y: 5.5 },
   seatedZLift: 1.2,
 
-  spriteWidth: { customer: 13, chef: 12, queue: 10 },
-  spriteBounds: { minX: 8, maxX: 92 },
-  bubbleAnchor: { left: 40, right: 60 },
+  spriteWidth: { customer: 11, chef: 10.5, queue: 8 },
+  spriteBounds: { minX: 7, maxX: 93 },
+  bubbleAnchor: { left: 38, right: 62 },
 
-  serve: { x: 50, y: 87 },
-  /** A bottom sheet, not a popover: a floating panel over a counter has nowhere to go here. */
+  serve: { x: 50, y: 90 },
+  /** A bottom sheet, not a popover: a floating board over a counter has nowhere to go here. */
   picker: { mode: 'sheet', minX: 50, maxX: 50, gap: 0 },
 
   paths: [
-    { left: 83, right: 101, top: -4, bottom: 41 },
-    { left: 71, right: 92, top: 27, bottom: 41 },
-    { left: 44, right: 57, top: 90, bottom: 102 },
+    { left: 83, right: 101, top: -4, bottom: 36 },
+    { left: 68, right: 92, top: 24, bottom: 36 },
   ],
-  canopyGaps: { top: [[80, 101]], bottom: [[42, 59]], left: [], right: [[-4, 44]] },
+  canopyGaps: { top: [[79, 101]], bottom: [], left: [], right: [[-4, 38]] },
   palms: [
     { x: 2, y: 16, h: 17, flip: true },
     { x: 3.5, y: 48, h: 15 },
@@ -230,7 +242,7 @@ const PORTRAIT_RAW = {
   leaves: [
     { x: 4, y: 62, h: 6, rotate: -22 },
     { x: 5, y: 97, h: 7, rotate: 14 },
-    { x: 96, y: 40, h: 6, rotate: 20 },
+    { x: 96, y: 44, h: 6, rotate: 20 },
     { x: 96.5, y: 99, h: 7, rotate: -12 },
     { x: 20, y: 5, h: 5, rotate: -8 },
   ],
