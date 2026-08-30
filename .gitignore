@@ -37,3 +37,4 @@ cdk.out/
 .DS_Store
 Thumbs.db
 desktop.ini
+tsconfig.tsbuildinfo
