@@ -22,6 +22,10 @@ yarn-error.log*
 dist/
 build/
 
+# Vite's dependency-optimizer cache
+.vite/
+node_modules/.vite/
+
 # Infrastructure as code
 .terraform/
 *.tfstate
