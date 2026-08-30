@@ -57,6 +57,8 @@ import { colors, radius, shadow, space, font, gradients } from './theme';
 // imported here unchanged — it manages its own state through the shared
 // `mandaiEchoes.playerState` gateway, so it needs no props from the shell.
 import TycoonGame from './components/tycoon/TycoonGame.jsx';
+// Keeps a crash in the game from taking the whole app down with it.
+import { TycoonBoundary } from './components/tycoon/TycoonBoundary';
 
 const exhibits = rawExhibits as Exhibit[];
 
@@ -454,7 +456,9 @@ function AppShell() {
               </div>
             )}
             <div style={{ flex: '1 1 auto', minHeight: 0 }}>
-              <TycoonGame />
+              <TycoonBoundary>
+                <TycoonGame />
+              </TycoonBoundary>
             </div>
           </div>
         )}

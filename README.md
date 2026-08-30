@@ -108,6 +108,22 @@ All progress lives under a single `localStorage` key, `mandaiEchoes.playerState`
 
 ## Troubleshooting the app
 
+**The Kitchen tab is empty, or the whole page goes blank** — almost always a dev server
+that has been running since before you pulled. Vite keeps a transformed-module and
+dependency cache tied to the config it started with, so a server left running across a
+change to `vite.config.ts` or the entry point serves a mismatched graph. The giveaway in
+the browser console is a `ReferenceError` such as `React is not defined`.
+
+```bash
+# stop the dev server (Ctrl+C), then
+rm -rf node_modules/.vite
+npm run dev
+```
+
+Then hard-reload the browser (Ctrl+Shift+R). A production check — `npm run build && npm run
+preview` — is unaffected by this cache and is the quickest way to confirm your checkout is
+fine.
+
 **Blank page after `npm run dev`** — you are probably on Node 16. `node -v` must be 18+.
 
 **`npm install` fails** — delete `node_modules` and `package-lock.json`, then `npm install`
