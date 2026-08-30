@@ -1,0 +1,70 @@
+# Publishes the app to GitHub Pages on every push to main, so there is always a live URL
+# to put in the slides and hand to judges.
+#
+# It deploys the SINGLE-FILE offline build rather than the normal one. That build inlines
+# every asset, so the page has no relative or absolute references left in it at all — which
+# means it works unchanged at https://<user>.github.io/<repo>/ without the base-path
+# rewriting a normal Vite build would need. The same artifact is what goes in Google Drive,
+# so the judges' online and offline copies cannot drift apart.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Lets you re-publish from the Actions tab without pushing.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; queue instead, and do not cancel a run mid-publish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # A broken build should never reach the judges.
+      - name: Test
+        run: npm test
+
+      - name: Build the self-contained bundle
+        run: npm run build:offline
+
+      - name: Assemble the site
+        run: |
+          mkdir -p _site
+          # index.html so the bare URL just works...
+          cp dist-offline/mandai-echoes.html _site/index.html
+          # ...and a named copy so the Drive download link and the live site are the
+          # same file, fetchable directly.
+          cp dist-offline/mandai-echoes.html _site/mandai-echoes.html
+          # Skip Jekyll: it would try to process the file and can mangle it.
+          touch _site/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

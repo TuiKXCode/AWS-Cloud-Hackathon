@@ -12,7 +12,34 @@ Runs entirely in the browser. No backend, no accounts, no cloud calls — all st
 - **Repository:** https://github.com/TuiKXCode/AWS-Cloud-Hackathon
 - **Visibility:** Public (anyone can read; only invited collaborators can push)
 
-**Jump to: [Run it](#running-the-app) · [Demo script](#demoing-it) · [Troubleshooting the app](#troubleshooting-the-app)**
+**Live demo: https://tuikxcode.github.io/AWS-Cloud-Hackathon/**
+
+**Jump to: [Run it](#running-the-app) · [Demo script](#demoing-it) · [Share it](#sharing-it-with-judges) · [Troubleshooting the app](#troubleshooting-the-app)**
+
+---
+
+## Sharing it with judges
+
+Two artifacts, from one command.
+
+**A live URL.** Every push to `main` builds, tests and publishes to GitHub Pages via
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). Put the link in the slides.
+
+**A single file that runs offline**, for a Drive folder or a laptop with no internet:
+
+```bash
+npm run build:offline      # -> dist-offline/mandai-echoes.html
+```
+
+That is the whole app in one ~0.9 MB HTML file: code, styling and artwork all inlined, no
+external requests. Upload it to the Drive folder next to the slides. Google Drive cannot
+*run* an HTML file — it has not served static sites since 2016 — so a viewer clicks
+**Download** and opens it locally. Nothing to install.
+
+The live site serves that same file, so the online and offline copies cannot drift apart.
+
+[`docs/VIEWING.md`](docs/VIEWING.md) is a short guide written for the judges rather than for
+us — copy it into the Drive folder alongside the app.
 
 ---
 
@@ -37,6 +64,7 @@ nothing to configure, no `.env`, no AWS credentials.
 | `npm run dev` | Dev server on <http://localhost:5173>, hot reload. **Localhost only.** |
 | `npm run dev:lan` | Same, but reachable from your phone on the same Wi-Fi — see below |
 | `npm run build` | Type-check and build the production bundle into `dist/` |
+| `npm run build:offline` | Build the single self-contained HTML file for Drive / offline use |
 | `npm run preview` | Serve the built `dist/` locally — use this to check the real build |
 | `npm test` | Run the test suite once (321 tests) |
 | `npm run test:watch` | Re-run tests as you edit |
