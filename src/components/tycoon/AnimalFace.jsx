@@ -13,6 +13,11 @@
  *   FaceFront  — eyes, muzzle, markings: skipped when a photo takes the face's place
  */
 
+// React is imported explicitly even though the automatic JSX runtime does not need
+// it: that way this file renders under either runtime, so a toolchain that falls
+// back to the classic transform cannot break it with "React is not defined".
+import React from 'react';
+
 const EYE = '#2A1A0C';
 
 export function FaceBehind({ exhibit }) {

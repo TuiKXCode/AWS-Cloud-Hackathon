@@ -15,6 +15,13 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    // The default 5s budgets are tuned for small unit tests. This suite also runs
+    // property tests that mount React a hundred times over, and the first run after a
+    // cold cache pays for transforming every module on top of that — which is exactly
+    // when a fresh clone runs `npm test` and sees a false failure. These are ceilings,
+    // not waits: a healthy run still finishes in well under a minute.
+    testTimeout: 30_000,
+    hookTimeout: 30_000,
     setupFiles: [resolve(rootDir, 'src/test/setup.ts')],
     include: [
       'src/**/*.{test,spec}.{ts,tsx}',

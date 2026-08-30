@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Camera, Play, Trash2 } from 'lucide-react';
 import { DAY, SCORING } from '../../game/constants.js';
 import { downscaleImageFile } from '../../lib/downscaleImage.js';

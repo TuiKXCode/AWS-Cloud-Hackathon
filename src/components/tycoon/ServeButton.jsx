@@ -1,3 +1,4 @@
+import React from 'react';
 import { PALETTE } from '../../game/constants.js';
 
 /**

@@ -1,3 +1,4 @@
+import React from 'react';
 import { ArrowRight, Coins, Sparkles } from 'lucide-react';
 import { UPGRADES } from '../../game/constants.js';
 import { questlineConfig } from '../../data/mandaiData.js';

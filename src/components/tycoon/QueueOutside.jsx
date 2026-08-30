@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import React, { memo } from 'react';
 import { pantryForDiet } from '../../game/orders.js';
 import { AnimalAvatarGroup } from './AnimalAvatar.jsx';
 

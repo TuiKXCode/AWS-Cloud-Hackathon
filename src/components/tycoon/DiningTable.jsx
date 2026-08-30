@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import React, { memo } from 'react';
 import { CUSTOMER_STATE, PALETTE } from '../../game/constants.js';
 import { foodItemsById } from '../../data/foodItems.js';
 

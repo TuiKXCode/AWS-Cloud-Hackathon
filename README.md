@@ -108,21 +108,24 @@ All progress lives under a single `localStorage` key, `mandaiEchoes.playerState`
 
 ## Troubleshooting the app
 
-**The Kitchen tab is empty, or the whole page goes blank** — almost always a dev server
-that has been running since before you pulled. Vite keeps a transformed-module and
-dependency cache tied to the config it started with, so a server left running across a
-change to `vite.config.ts` or the entry point serves a mismatched graph. The giveaway in
-the browser console is a `ReferenceError` such as `React is not defined`.
+**The Kitchen tab shows "The kitchen could not start", or the page goes blank** — if the
+console says `React is not defined`, your `node_modules` is out of step with the code. The
+game's components are `.jsx` and rely on the JSX runtime that `vite.config.ts` pins; an
+older `@vitejs/plugin-react` left over from a previous install defaults to the classic
+transform instead, which needs a `React` value the modules did not import.
 
 ```bash
 # stop the dev server (Ctrl+C), then
+npm install
 rm -rf node_modules/.vite
 npm run dev
 ```
 
-Then hard-reload the browser (Ctrl+Shift+R). A production check — `npm run build && npm run
-preview` — is unaffected by this cache and is the quickest way to confirm your checkout is
-fine.
+Then hard-reload the browser (Ctrl+Shift+R). As of v1.0.3 the components import React
+explicitly as well, so they render under either runtime and this should not recur.
+
+A production check — `npm run build && npm run preview` — uses a fresh transform every time
+and is the quickest way to confirm your checkout itself is fine.
 
 **Blank page after `npm run dev`** — you are probably on Node 16. `node -v` must be 18+.
 

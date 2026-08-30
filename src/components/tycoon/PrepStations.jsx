@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import { STATIONS, itemsForStation } from '../../data/foodItems.js';
 import { PALETTE } from '../../game/constants.js';

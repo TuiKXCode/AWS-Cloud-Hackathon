@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { exhibitsById, questlineConfig } from '../../data/mandaiData.js';
 import { CHEF_STATE, GAME_PHASE, TIMING, chefIsBusy } from '../../game/constants.js';
 import { plateMatchesOrder } from '../../game/orders.js';

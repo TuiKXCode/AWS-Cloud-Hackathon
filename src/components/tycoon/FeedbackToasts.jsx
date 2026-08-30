@@ -2,6 +2,11 @@
  * Score feedback that floats up over the floor. Driven by ttl in the reducer, so toasts
  * clear themselves without any timers in the view layer.
  */
+// React is imported explicitly even though the automatic JSX runtime does not need
+// it: that way this file renders under either runtime, so a toolchain that falls
+// back to the classic transform cannot break it with "React is not defined".
+import React from 'react';
+
 export default function FeedbackToasts({ toasts }) {
   if (!toasts || toasts.length === 0) return null;
 

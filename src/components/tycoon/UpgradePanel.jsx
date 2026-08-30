@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import React, { memo } from 'react';
 import { Lock } from 'lucide-react';
 import { PALETTE, UPGRADES } from '../../game/constants.js';
 

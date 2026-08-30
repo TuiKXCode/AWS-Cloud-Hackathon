@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import React, { memo } from 'react';
 import { CUSTOMER_STATE, bubbleAnchorFor, clampToScene } from '../../game/constants.js';
 import { AnimalAvatarGroup } from './AnimalAvatar.jsx';
 import OrderBubble from './OrderBubble.jsx';

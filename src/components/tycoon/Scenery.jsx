@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import React, { memo } from 'react';
 import { Trash2 } from 'lucide-react';
 import { PALETTE, PLATE_CAPACITY } from '../../game/constants.js';
 import { foodItemsById } from '../../data/foodItems.js';

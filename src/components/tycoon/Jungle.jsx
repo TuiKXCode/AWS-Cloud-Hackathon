@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import React, { memo } from 'react';
 
 /**
  * The jungle the restaurant sits in: grass, the dirt path guests arrive along, a dense

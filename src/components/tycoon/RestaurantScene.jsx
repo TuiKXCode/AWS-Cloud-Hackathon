@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { CHEF_STATE, PLATE_CAPACITY, tablesFor } from '../../game/constants.js';
 import AnimalCustomer from './AnimalCustomer.jsx';
 import ChefSprite from './ChefSprite.jsx';

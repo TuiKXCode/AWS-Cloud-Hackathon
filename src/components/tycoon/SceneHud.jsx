@@ -1,3 +1,4 @@
+import React from 'react';
 import { Pause, Play, Wallet } from 'lucide-react';
 import { GAME_PHASE, PALETTE } from '../../game/constants.js';
 import { questlineConfig } from '../../data/mandaiData.js';

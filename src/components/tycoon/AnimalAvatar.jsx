@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import React, { useId } from 'react';
 import { useImage } from '../../hooks/useImage.js';
 import { FaceBehind, FaceFront } from './AnimalFace.jsx';
 

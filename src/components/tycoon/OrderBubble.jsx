@@ -1,3 +1,4 @@
+import React from 'react';
 import { foodItemsById } from '../../data/foodItems.js';
 import { MOOD } from '../../game/constants.js';
 import { groupItems } from '../../game/orders.js';

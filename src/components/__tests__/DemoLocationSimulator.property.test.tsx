@@ -64,11 +64,30 @@ afterEach(() => {
 /**
  * Unlike the engine property tests, which exercise pure functions, every run here mounts
  * a React tree, opens a <select> and reads the context back. A hundred of those is
- * comfortably the slowest test in the suite (~7s warm, more on a cold or loaded machine),
- * so it gets an explicit budget instead of vitest's 5s default — which it was tripping
- * intermittently, failing a suite that was otherwise green.
+ * comfortably the slowest test in the suite, so it gets an explicit budget rather than
+ * vitest's 5s default.
+ *
+ * The budget is headroom for a cold or loaded machine, NOT the fix for the intermittent
+ * failure this test used to show — that was negative zero, see `coordinate` below.
  */
 const PROPERTY_TIMEOUT_MS = 60_000;
+
+/**
+ * A latitude/longitude arbitrary that never yields negative zero.
+ *
+ * The property reads the coordinate back out of the DOM as text, and `String(-0)` is
+ * `"0"` — the sign of zero cannot survive that round-trip. `expect(0).toBe(-0)` then
+ * fails, because `toBe` compares with `Object.is`. That is an artifact of measuring
+ * through text, not a defect in the override: -0 and 0 are the same point on Earth.
+ *
+ * This was genuinely hard to see, because `JSON.stringify(-0)` is `0`, so fast-check
+ * reported the counterexample as a harmless-looking `{"lat":0,"lng":0}`.
+ */
+function coordinate(min: number, max: number): fc.Arbitrary<number> {
+  return fc
+    .double({ min, max, noNaN: true })
+    .map((v) => (Object.is(v, -0) ? 0 : v));
+}
 
 describe('DemoLocationSimulator — Property 6: simulator position override exactness', () => {
   it('sets currentPosition to exactly the selected demo location coordinates', () => {
@@ -80,8 +99,8 @@ describe('DemoLocationSimulator — Property 6: simulator position override exac
           .array(
             fc.record({
               label: fc.string(),
-              lat: fc.double({ min: -90, max: 90, noNaN: true }),
-              lng: fc.double({ min: -180, max: 180, noNaN: true }),
+              lat: coordinate(-90, 90),
+              lng: coordinate(-180, 180),
             }),
             { minLength: 1, maxLength: 10 },
           )
@@ -96,29 +115,36 @@ describe('DemoLocationSimulator — Property 6: simulator position override exac
           mockDemoLocations.length = 0;
           mockDemoLocations.push(...locations);
 
-          render(
-            <LocationProvider>
-              <DemoLocationSimulator />
-              <PositionProbe />
-            </LocationProvider>,
-          );
+          // cleanup() MUST run even when an assertion throws. It used to be the last
+          // statement in this body, so a single failing run left its tree mounted and
+          // every later run — including fast-check's shrinking passes — then found two
+          // simulators and failed with "Found multiple elements". That turned one real
+          // counterexample into a cascade and hid what actually went wrong.
+          try {
+            render(
+              <LocationProvider>
+                <DemoLocationSimulator />
+                <PositionProbe />
+              </LocationProvider>,
+            );
 
-          const select = screen.getByLabelText(
-            'Demo location simulator',
-          ) as HTMLSelectElement;
+            const select = screen.getByLabelText(
+              'Demo location simulator',
+            ) as HTMLSelectElement;
 
-          // Selecting the entry means choosing its array index as the value.
-          fireEvent.change(select, { target: { value: String(index) } });
+            // Selecting the entry means choosing its array index as the value.
+            fireEvent.change(select, { target: { value: String(index) } });
 
-          const expected = locations[index];
-          const lat = Number(screen.getByTestId('lat').textContent);
-          const lng = Number(screen.getByTestId('lng').textContent);
+            const expected = locations[index];
+            const lat = Number(screen.getByTestId('lat').textContent);
+            const lng = Number(screen.getByTestId('lng').textContent);
 
-          expect(screen.getByTestId('source').textContent).toBe('simulator');
-          expect(lat).toBe(expected.lat);
-          expect(lng).toBe(expected.lng);
-
-          cleanup();
+            expect(screen.getByTestId('source').textContent).toBe('simulator');
+            expect(lat).toBe(expected.lat);
+            expect(lng).toBe(expected.lng);
+          } finally {
+            cleanup();
+          }
         },
       ),
       { numRuns: 100 },
